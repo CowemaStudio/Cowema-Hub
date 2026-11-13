@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cowema Hub — Portal Form & Tools Internal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f0e8; --card:#fffdf8; --ink:#2b2a26; --muted:#76705f;
+    --line:#e3dccd; --accent:#4f5d3f; --accent-soft:#e7eadd; --clay:#a8623d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5}
+  .wrap{max-width:860px;margin:0 auto;padding:48px 20px 64px}
+  header{margin-bottom:28px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--clay);font-weight:600}
+  h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:44px;line-height:1.05;margin:6px 0 8px}
+  .sub{color:var(--muted);max-width:560px;margin:0}
+  .search{margin:24px 0 8px;position:relative}
+  .search input{width:100%;padding:12px 14px 12px 40px;border:1px solid var(--line);border-radius:10px;background:var(--card);font:inherit;color:var(--ink)}
+  .search input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
+  section{margin-top:34px}
+  h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:26px;margin:0 0 4px;display:flex;align-items:baseline;gap:10px}
+  h2 .num{font-family:Inter,sans-serif;font-size:12px;color:var(--clay);font-weight:600;letter-spacing:.08em}
+  .sec-desc{color:var(--muted);margin:0 0 14px;font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s, transform .15s}
+  .card:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .tag{align-self:flex-start;font-size:11px;font-weight:600;letter-spacing:.04em;padding:3px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+  .tag.ext{background:#f3e4da;color:var(--clay)}
+  .card h3{margin:0;font-size:16px;font-weight:600}
+  .card p{margin:0;color:var(--muted);font-size:13.5px;flex:1}
+  .who{font-size:12px;color:var(--ink);opacity:.75}
+  .actions{display:flex;gap:8px;margin-top:4px}
+  .btn{flex:1;text-align:center;text-decoration:none;font-size:13px;font-weight:600;padding:8px 10px;border-radius:8px;background:var(--accent);color:#fff;border:0;cursor:pointer;font-family:inherit}
+  .btn.ghost{flex:0 0 auto;background:transparent;color:var(--accent);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--accent)}
+  .empty{display:none;color:var(--muted);text-align:center;margin-top:40px}
+  footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media (max-width:520px){h1{font-size:36px}.wrap{padding-top:32px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Cowema Studio Arsitektur · Internal</div>
+    <h1>Cowema Hub</h1>
+    <p class="sub">Satu pintu untuk semua form, laporan, dan viewer operasional Cowema, Kalabenda, dan V Form.</p>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Cari form… (mis. mobil, MoM, surat jalan)" autocomplete="off">
+    </div>
+  </header>
+
+  <main id="list"></main>
+  <p class="empty" id="empty">Tidak ada link yang cocok.</p>
+
+  <footer>
+    <span>PT Cowema Studio Arsitektur · Jakarta — Bali</span>
+    <span>Diperbarui November 2026</span>
+  </footer>
+</div>
+<div class="toast" id="toast">Link disalin</div>
+
+<script>
+const DATA = [
+  { title:"Rapat & Laporan Mingguan", desc:"Laporan weekly tim (format diperbarui Agustus 2026).", items:[
+    { t:"Form Laporan Weekly", d:"Isi laporan progres mingguan sebelum meeting weekly.", who:"Diisi: seluruh tim", tag:"Form", url:"https://tinyurl.com/3w5fx9xj" },
+    { t:"Rekap Data Weekly", d:"Tabel viewer kumpulan seluruh laporan weekly yang sudah masuk.", who:"Dilihat: seluruh tim", tag:"Viewer", url:"https://tinyurl.com/5n7jbnzx" },
+  ]},
+  { title:"Notulen Rapat (MoM)", desc:"Minutes of meeting internal, terpisah per entitas.", items:[
+    { t:"MoM Cowema", d:"Form notulen rapat untuk proyek dan meeting Cowema Studio.", who:"Diisi: tim internal", tag:"Form", url:"https://cowemastudio.github.io/NewMoM/" },
+    { t:"MoM Kalabenda", d:"Form notulen rapat untuk Kalabenda (furniture, bronze hardware, art).", who:"Diisi: tim internal", tag:"Form", url:"https://cowemastudio.github.io/MoM-Kalabenda/" },
+    { t:"MoM V Form", d:"Form notulen rapat untuk V Form.", who:"Diisi: tim internal", tag:"Form", url:"https://cowemastudio.github.io/MoM-VForm-New/" },
+  ]},
+  { title:"Fasilitas Kantor", desc:"Peminjaman dan jadwal kendaraan operasional.", items:[
+    { t:"Form Pemakaian Mobil", d:"Ajukan pemakaian mobil kantor: tanggal, jam, tujuan, dan keperluan.", who:"Diisi: peminjam", tag:"Form", url:"https://tinyurl.com/3wyryp7a" },
+    { t:"Kalender Mobil", d:"Lihat jadwal mobil: siapa yang pakai dan kapan, sebelum mengajukan.", who:"Dilihat: seluruh tim", tag:"Viewer", url:"https://tinyurl.com/47esxxwv" },
+  ]},
+  { title:"Vendor", desc:"Alur kunjungan vendor yang mempresentasikan produk/jasa.", items:[
+    { t:"Form Penawaran Vendor", d:"Form untuk vendor yang ingin berkunjung ke office Cowema dan mempresentasikan produk/jasanya. Bagikan link ini ke vendor.", who:"Diisi: vendor (eksternal)", tag:"Eksternal", ext:true, url:"https://cowemastudio.github.io/FormPenawaranVendor/" },
+    { t:"Laporan Presentasi Vendor", d:"Laporan dari tim Cowema yang hadir saat vendor visit: catatan produk/jasa yang dikenalkan.", who:"Diisi: tim yang hadir", tag:"Form", url:"https://cowemastudio.github.io/Laporan-Presentasi-Vendor/" },
+  ]},
+  { title:"Pengiriman Barang", desc:"Surat jalan + surat tanda terima dalam satu form.", items:[
+    { t:"Surat Jalan & Tanda Terima — V Form", d:"Buat surat jalan sekaligus tanda terima untuk pengiriman barang dari V Form.", who:"Diisi: tim logistik / admin", tag:"Form", url:"https://cowemastudio.github.io/SuratTandaTerimaVForm/" },
+    { t:"Surat Jalan & Tanda Terima — Kalabenda", d:"Buat surat jalan sekaligus tanda terima untuk pengiriman barang dari Kalabenda.", who:"Diisi: tim logistik / admin", tag:"Form", url:"https://cowemastudio.github.io/SuratTandaTerimaKalabenda/" },
+  ]},
+];
+
+const list = document.getElementById('list');
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render(q=''){
+  q = q.trim().toLowerCase();
+  let html = '', n = 0, total = 0;
+  DATA.forEach((sec,i) => {
+    const items = sec.items.filter(it => !q || (it.t+' '+it.d+' '+it.who+' '+sec.title).toLowerCase().includes(q));
+    if(!items.length) return;
+    n++; total += items.length;
+    html += `<section><h2><span class="num">0${i+1}</span>${esc(sec.title)}</h2><p class="sec-desc">${esc(sec.desc)}</p><div class="grid">` +
+      items.map(it => `<div class="card">
+        <span class="tag${it.ext?' ext':''}">${esc(it.tag)}</span>
+        <h3>${esc(it.t)}</h3>
+        <p>${esc(it.d)}</p>
+        <span class="who">${esc(it.who)}</span>
+        <div class="actions">
+          <a class="btn" href="${it.url}" target="_blank" rel="noopener">Buka</a>
+          <button class="btn ghost" data-url="${it.url}">Salin link</button>
+        </div></div>`).join('') + `</div></section>`;
+  });
+  list.innerHTML = html;
+  document.getElementById('empty').style.display = total ? 'none' : 'block';
+}
+render();
+document.getElementById('q').addEventListener('input', e => render(e.target.value));
+
+const toast = document.getElementById('toast');
+list.addEventListener('click', async e => {
+  const b = e.target.closest('button[data-url]'); if(!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.url); toast.textContent='Link disalin'; }
+  catch { toast.textContent = b.dataset.url; }
+  toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 1800);
+});
+</script>
+</body>
+</html>
